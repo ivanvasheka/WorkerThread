@@ -177,27 +177,27 @@ public class Event<T> {
             event = new Event<>();
         }
 
-        public Builder withType(@Type int type) {
+        public Builder<T> withType(@Type int type) {
             event.type = type;
             return this;
         }
 
-        public Builder withNumber(@NonNull Number number) {
+        public Builder<T> withNumber(@NonNull Number number) {
             event.number = number;
             return this;
         }
 
-        public Builder withMessage(@NonNull String message) {
+        public Builder<T> withMessage(@NonNull String message) {
             event.message = message;
             return this;
         }
 
-        public Builder withExtra(@NonNull Bundle extra) {
+        public Builder<T> withExtra(@NonNull Bundle extra) {
             event.extra = extra;
             return this;
         }
 
-        public Builder withData(@NonNull T data) {
+        public Builder<T> withData(@NonNull T data) {
             event.data = data;
             return this;
         }
@@ -208,12 +208,12 @@ public class Event<T> {
          *
          * @return event builder.
          */
-        public Builder useSourceThread() {
+        public Builder<T> useSourceThread() {
             event.useMainThread = false;
             return this;
         }
 
-        public Event build() {
+        public Event<T> build() {
             return event;
         }
 
