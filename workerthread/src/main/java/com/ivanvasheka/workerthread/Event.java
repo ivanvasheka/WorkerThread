@@ -9,7 +9,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @SuppressWarnings("unused")
-public class Event {
+public class Event<T> {
 
     /**
      * Default event type. Allows to store multiple events for one subscriber.
@@ -48,7 +48,7 @@ public class Event {
     @Nullable
     private Bundle extra;
     @Nullable
-    private Object data;
+    private T data;
 
     public Event() {
     }
@@ -73,7 +73,7 @@ public class Event {
     }
 
     @Nullable
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
@@ -91,31 +91,31 @@ public class Event {
         return type;
     }
 
-    boolean useMainThread() {
+    public boolean useMainThread() {
         return useMainThread;
     }
 
-    void setNumber(int number) {
+    public void setNumber(int number) {
         this.number = number;
     }
 
-    void setMessage(@NonNull String message) {
+    public void setMessage(@NonNull String message) {
         this.message = message;
     }
 
-    void setExtra(@NonNull Bundle extra) {
+    public void setExtra(@NonNull Bundle extra) {
         this.extra = extra;
     }
 
-    void setData(@NonNull Object data) {
+    public void setData(@NonNull T data) {
         this.data = data;
     }
 
-    void setSubscriber(@NonNull Class<?> subscriber) {
+    public void setSubscriber(@NonNull Class<?> subscriber) {
         this.subscriber = subscriber;
     }
 
-    void setType(@Type int type) {
+    public void setType(@Type int type) {
         this.type = type;
     }
 
@@ -161,38 +161,44 @@ public class Event {
                 '}';
     }
 
-    public static Builder toEveryone() {
-        return new Event().new Builder();
+    public static <T> Builder<T> toEveryone() {
+        return new Builder<>();
     }
 
-    public static Builder to(@NonNull Class<?> subscriber) {
-        return new Event(subscriber).new Builder();
+    public static <T> Builder<T> to(@NonNull Class<?> subscriber) {
+        return new Builder<>();
     }
 
-    public class Builder {
+    public static class Builder<T> {
+
+        private Event<T> event;
+
+        public Builder() {
+            event = new Event<>();
+        }
 
         public Builder withType(@Type int type) {
-            Event.this.type = type;
+            event.type = type;
             return this;
         }
 
         public Builder withNumber(@NonNull Number number) {
-            Event.this.number = number;
+            event.number = number;
             return this;
         }
 
         public Builder withMessage(@NonNull String message) {
-            Event.this.message = message;
+            event.message = message;
             return this;
         }
 
         public Builder withExtra(@NonNull Bundle extra) {
-            Event.this.extra = extra;
+            event.extra = extra;
             return this;
         }
 
-        public Builder withData(@NonNull Object data) {
-            Event.this.data = data;
+        public Builder withData(@NonNull T data) {
+            event.data = data;
             return this;
         }
 
@@ -203,16 +209,16 @@ public class Event {
          * @return event builder.
          */
         public Builder useSourceThread() {
-            Event.this.useMainThread = false;
+            event.useMainThread = false;
             return this;
         }
 
         public Event build() {
-            return Event.this;
+            return event;
         }
 
         public void post() {
-            Event.this.post();
+            event.post();
         }
     }
 }
