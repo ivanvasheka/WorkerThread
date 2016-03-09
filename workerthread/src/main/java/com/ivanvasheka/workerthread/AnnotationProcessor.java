@@ -44,7 +44,7 @@ final class AnnotationProcessor {
                 }
 
                 Class<?> eventType = parameterTypes[0];
-                if (!Event.class.equals(eventType)) {
+                if (!Event.class.isAssignableFrom(eventType)) {
                     throw new IllegalArgumentException("@Subscribe method " + method + " must have an Event type parameter.");
                 }
 

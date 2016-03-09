@@ -134,10 +134,15 @@ public final class WorkerThread {
         Set<Method> methods = AnnotationProcessor.getSubscribeMethods(subscriber.getClass());
         if (methods != null) {
             for (final Method method : methods) {
-                if (event.useMainThread()) {
-                    invokeInMainThread(method, subscriber, event);
-                } else {
-                    invoke(method, subscriber, event);
+                // Should be non empty array with one parameter type, if not
+                // the AnnotationProcessor will throw exception before
+                Class<?>[] params = method.getParameterTypes();
+                if (params[0].equals(event.getClass())) {
+                    if (event.useMainThread()) {
+                        invokeInMainThread(method, subscriber, event);
+                    } else {
+                        invoke(method, subscriber, event);
+                    }
                 }
             }
         }

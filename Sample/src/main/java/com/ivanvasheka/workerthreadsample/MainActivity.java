@@ -73,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Subscribe
+    public void onCustomEvent(CustomEvent event) {
+        Log.e(TAG, "onCustomEvent " + event.toString() + " in " + MainActivity.this);
+    }
+
     private static class Task implements Runnable {
         @Override
         public void run() {
@@ -90,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .post();
             }
 
-            Event.toEveryone().post();
+            WorkerThread.get().post(new CustomEvent());
         }
     }
 }
