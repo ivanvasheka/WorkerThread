@@ -4,12 +4,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -21,7 +18,7 @@ public final class WorkerThread {
     private Handler mainThread;
 
     private List<Event> events;
-    private List<Object> subscribers;
+    private List<EventListener> subscribers;
 
     private WorkerThread() {
         executor = Executors.newCachedThreadPool();
@@ -71,11 +68,23 @@ public final class WorkerThread {
             removePreviousLatestEvents(event);
         }
 
-        if (Event.TYPE_ONE_SHOT != type) {
+        if (Event.TYPE_ONE_SHOT == type) {
+            Class<?> eventSubscriber = event.getSubscriber();
+            if (eventSubscriber == null) {
+                for (EventListener subscriber : subscribers) {
+                    deliverEvent(subscriber, event);
+                }
+            } else {
+                for (EventListener subscriber : subscribers) {
+                    if (subscriber.getClass().equals(eventSubscriber)) {
+                        deliverEvent(subscriber, event);
+                    }
+                }
+            }
+        } else {
             events.add(event);
+            deliverEvents();
         }
-
-        deliverEvents();
     }
 
     /**
@@ -83,10 +92,9 @@ public final class WorkerThread {
      * The most appropriate scheme is to subscribe in onResume and unsubscribe in onPause
      * lifecycle methods.
      *
-     * @param subscriber object that contains {@link com.ivanvasheka.workerthread.annotation.Subscribe}
-     *                   annotated method(s).
+     * @param subscriber .
      */
-    public void subscribe(@NonNull Object subscriber) {
+    public void subscribe(@NonNull EventListener subscriber) {
         if (!subscribers.contains(subscriber)) {
             subscribers.add(subscriber);
             deliverEvents();
@@ -98,10 +106,9 @@ public final class WorkerThread {
      * The most appropriate scheme is to subscribe in onResume and unsubscribe in onPause
      * lifecycle methods.
      *
-     * @param subscriber object that contains {@link com.ivanvasheka.workerthread.annotation.Subscribe}
-     *                   annotated method(s).
+     * @param subscriber .
      */
-    public void unsubscribe(@NonNull Object subscriber) {
+    public void unsubscribe(@NonNull EventListener subscriber) {
         if (subscribers.contains(subscriber)) {
             subscribers.remove(subscriber);
         }
@@ -114,12 +121,12 @@ public final class WorkerThread {
                 Event event = iterator.next();
                 Class<?> eventSubscriber = event.getSubscriber();
                 if (eventSubscriber == null) {
-                    for (Object subscriber : subscribers) {
+                    for (EventListener subscriber : subscribers) {
                         deliverEvent(subscriber, event);
                     }
                     iterator.remove();
                 } else {
-                    for (Object subscriber : subscribers) {
+                    for (EventListener subscriber : subscribers) {
                         if (subscriber.getClass().equals(eventSubscriber)) {
                             deliverEvent(subscriber, event);
                             iterator.remove();
@@ -130,43 +137,17 @@ public final class WorkerThread {
         }
     }
 
-    private void deliverEvent(final Object subscriber, final Event event) {
-        Set<Method> methods = AnnotationProcessor.getSubscribeMethods(subscriber.getClass());
-        if (methods != null) {
-            for (final Method method : methods) {
-                // Should be non empty array with one parameter type, if not
-                // the AnnotationProcessor will throw exception before
-                Class<?>[] params = method.getParameterTypes();
-                if (params[0].equals(event.getClass())) {
-                    if (event.useMainThread()) {
-                        invokeInMainThread(method, subscriber, event);
-                    } else {
-                        invoke(method, subscriber, event);
-                    }
+    private void deliverEvent(final EventListener subscriber, final Event event) {
+        if (event.useMainThread()) {
+            mainThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    subscriber.onEvent(event);
                 }
-            }
+            });
+        } else {
+            subscriber.onEvent(event);
         }
-    }
-
-    private void invoke(Method method, Object subscriber, Event event) {
-        //noinspection TryWithIdenticalCatches
-        try {
-            method.invoke(subscriber, event);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void invokeInMainThread(final Method method, final Object subscriber, final Event event) {
-        mainThread.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                invoke(method, subscriber, event);
-                            }
-                        }
-        );
     }
 
     private void removePreviousLatestEvents(Event event) {

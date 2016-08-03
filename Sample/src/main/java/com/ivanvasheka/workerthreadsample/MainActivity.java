@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.ivanvasheka.workerthread.Event;
 import com.ivanvasheka.workerthread.WorkerThread;
-import com.ivanvasheka.workerthread.annotation.Subscribe;
+import com.ivanvasheka.workerthread.Subscribe;
 
 import java.util.Random;
 
