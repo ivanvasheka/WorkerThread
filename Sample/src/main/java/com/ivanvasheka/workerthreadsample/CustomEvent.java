@@ -6,6 +6,10 @@ public class CustomEvent extends Event {
 
     public int T;
 
+    public CustomEvent() {
+        T = 100;
+    }
+
     @Override
     public String toString() {
         return "CustomEvent{" +

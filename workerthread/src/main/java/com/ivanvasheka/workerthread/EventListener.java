@@ -1,5 +1,5 @@
 package com.ivanvasheka.workerthread;
 
-public interface EventListener<T extends Event> {
-    void onEvent(T event);
+public interface EventListener {
+    void onEvent(Event event);
 }

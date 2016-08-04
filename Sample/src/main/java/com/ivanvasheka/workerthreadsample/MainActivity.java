@@ -8,12 +8,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.ivanvasheka.workerthread.Event;
+import com.ivanvasheka.workerthread.EventListener;
 import com.ivanvasheka.workerthread.WorkerThread;
-import com.ivanvasheka.workerthread.Subscribe;
 
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, EventListener {
 
     public static final String TAG = "WT-SAMPLE";
 
@@ -55,9 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Subscribe
+    @Override
     public void onEvent(Event event) {
         Log.e(TAG, "onEvent " + event.toString() + " in " + MainActivity.this);
+
+        if (event instanceof CustomEvent) {
+            Log.e(TAG, "Custom event with T = " + ((CustomEvent) event).T);
+        }
 
         if (progressBar.isIndeterminate()) {
             progressBar.setIndeterminate(false);
@@ -71,11 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textView.setText("Done!");
             progressBar.setProgress(0);
         }
-    }
-
-    @Subscribe
-    public void onCustomEvent(CustomEvent event) {
-        Log.e(TAG, "onCustomEvent " + event.toString() + " in " + MainActivity.this);
     }
 
     private static class Task implements Runnable {
