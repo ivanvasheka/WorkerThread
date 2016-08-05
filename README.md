@@ -1,7 +1,7 @@
 # WorkerThread
 
-A simple AsyncTask with primitive EventBus implementation.
+Tiny lib for convenient usage of asynchronous tasks in Android.
 
 #Gradle
 
-`compile 'com.ivanvasheka.workerthread:workerthread:0.1.5'`
+`compile 'com.ivanvasheka.workerthread:workerthread:0.1.6'`
