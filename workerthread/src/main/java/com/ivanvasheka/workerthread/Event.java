@@ -90,7 +90,7 @@ public class Event<T> {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(@Nullable Number number) {
         this.number = number;
     }
 
@@ -126,7 +126,7 @@ public class Event<T> {
         return message;
     }
 
-    public void setMessage(@NonNull String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
@@ -146,7 +146,7 @@ public class Event<T> {
         return extra;
     }
 
-    public void setExtra(@NonNull Bundle extra) {
+    public void setExtra(@Nullable Bundle extra) {
         this.extra = extra;
     }
 
@@ -163,7 +163,7 @@ public class Event<T> {
         return data;
     }
 
-    public void setData(@NonNull T data) {
+    public void setData(@Nullable T data) {
         this.data = data;
     }
 
@@ -210,22 +210,22 @@ public class Event<T> {
             return this;
         }
 
-        public Builder<T> withNumber(@NonNull Number number) {
+        public Builder<T> withNumber(@Nullable Number number) {
             event.number = number;
             return this;
         }
 
-        public Builder<T> withMessage(@NonNull String message) {
+        public Builder<T> withMessage(@Nullable String message) {
             event.message = message;
             return this;
         }
 
-        public Builder<T> withExtra(@NonNull Bundle extra) {
+        public Builder<T> withExtra(@Nullable Bundle extra) {
             event.extra = extra;
             return this;
         }
 
-        public Builder<T> withData(@NonNull T data) {
+        public Builder<T> withData(@Nullable T data) {
             event.data = data;
             return this;
         }
