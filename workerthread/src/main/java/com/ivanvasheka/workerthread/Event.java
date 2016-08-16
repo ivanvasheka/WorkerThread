@@ -1,6 +1,7 @@
 package com.ivanvasheka.workerthread;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -94,6 +95,10 @@ public class Event<T> {
         this.number = number;
     }
 
+    public boolean hasNumber() {
+        return number != null;
+    }
+
     /**
      * Returns int value if the event was supplied with int as a number.
      *
@@ -150,8 +155,285 @@ public class Event<T> {
         this.extra = extra;
     }
 
+    /**
+     * Returns true if the given key is contained in the mapping.
+     *
+     * @param key a String or null
+     * @return true if the key is part of the mapping, false otherwise
+     */
     public boolean hasExtra(String key) {
         return extra != null && extra.containsKey(key);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a boolean value
+     */
+    public boolean getBooleanExtra(String key, boolean defaultValue) {
+        return extra == null ? defaultValue : extra.getBoolean(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a byte value
+     */
+    public byte getByteExtra(String key, byte defaultValue) {
+        return extra == null ? defaultValue : extra.getByte(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a char value
+     */
+    public char getCharExtra(String key, char defaultValue) {
+        return extra == null ? defaultValue : extra.getChar(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a short value
+     */
+    public short getShortExtra(String key, short defaultValue) {
+        return extra == null ? defaultValue : extra.getShort(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a integer value
+     */
+    public int getIntExtra(String key, int defaultValue) {
+        return extra == null ? defaultValue : extra.getInt(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a long value
+     */
+    public long getLongExtra(String key, long defaultValue) {
+        return extra == null ? defaultValue : extra.getLong(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a float value
+     */
+    public float getFloatExtra(String key, float defaultValue) {
+        return extra == null ? defaultValue : extra.getFloat(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key          a String or null
+     * @param defaultValue value to return if key does not exists
+     * @return a double value
+     */
+    public double getDoubleExtra(String key, double defaultValue) {
+        return extra == null ? defaultValue : extra.getDouble(key, defaultValue);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key a String or null
+     * @return a String value or null
+     */
+    public String getStringExtra(String key) {
+        return extra == null ? null : extra.getString(key);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key a String or null
+     * @return a CharSequence value or null
+     */
+    public CharSequence getCharSequenceExtra(String key) {
+        return extra == null ? null : extra.getCharSequence(key);
+    }
+
+    /**
+     * Returns the value associated with the given key, or defaultValue if no mapping of the
+     * desired type exists for the given key.
+     *
+     * @param key a String or null
+     * @return a Parcelable value or null
+     */
+    public <E extends Parcelable> E getParcelableExtra(String key) {
+        return extra == null ? null : extra.<E>getParcelable(key);
+    }
+
+    /**
+     * Adds a boolean value to the extra, replacing any existing value for the given key.
+     * Added boolean can be obtained by calling getBooleanExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a boolean
+     */
+    public void putExtra(String key, boolean value) {
+        if (extra == null) extra = new Bundle();
+        extra.putBoolean(key, value);
+    }
+
+    /**
+     * Adds a byte value to the extra, replacing any existing value for the given key.
+     * Added byte can be obtained by calling getByteExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a byte
+     */
+    public void putExtra(String key, byte value) {
+        if (extra == null) extra = new Bundle();
+        extra.putByte(key, value);
+    }
+
+    /**
+     * Adds a char value to the extra, replacing any existing value for the given key.
+     * Added char can be obtained by calling getCharExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a char
+     */
+    public void putExtra(String key, char value) {
+        if (extra == null) extra = new Bundle();
+        extra.putChar(key, value);
+    }
+
+    /**
+     * Adds a short value to the extra, replacing any existing value for the given key.
+     * Added short can be obtained by calling getShortExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a short
+     */
+    public void putExtra(String key, short value) {
+        if (extra == null) extra = new Bundle();
+        extra.putShort(key, value);
+    }
+
+    /**
+     * Adds an integer value to the extra, replacing any existing value for the given key.
+     * Added integer can be obtained by calling getIntExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value an int
+     */
+    public void putExtra(String key, int value) {
+        if (extra == null) extra = new Bundle();
+        extra.putInt(key, value);
+    }
+
+    /**
+     * Adds a long value to the extra, replacing any existing value for the given key.
+     * Added long can be obtained by calling getLongExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a long
+     */
+    public void putExtra(String key, long value) {
+        if (extra == null) extra = new Bundle();
+        extra.putLong(key, value);
+    }
+
+    /**
+     * Adds a float value to the extra, replacing any existing value for the given key.
+     * Added float can be obtained by calling getFloatExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a float
+     */
+    public void putExtra(String key, float value) {
+        if (extra == null) extra = new Bundle();
+        extra.putFloat(key, value);
+    }
+
+    /**
+     * Adds a double value to the extra, replacing any existing value for the given key.
+     * Added double can be obtained by calling getDoubleExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a double
+     */
+    public void putExtra(String key, double value) {
+        if (extra == null) extra = new Bundle();
+        extra.putDouble(key, value);
+    }
+
+    /**
+     * Adds a String value to the extra, replacing any existing value for the given key.
+     * Added String can be obtained by calling getStringExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a String or null
+     */
+    public void putExtra(String key, String value) {
+        if (extra == null) extra = new Bundle();
+        extra.putString(key, value);
+    }
+
+    /**
+     * Adds a CharSequence value to the extra, replacing any existing value for the given key.
+     * Added CharSequence can be obtained by calling getCharSequenceExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a CharSequence or null
+     */
+    public void putExtra(String key, CharSequence value) {
+        if (extra == null) extra = new Bundle();
+        extra.putCharSequence(key, value);
+    }
+
+    /**
+     * Adds a Parcelable value to the extra, replacing any existing value for the given key.
+     * Added Parcelable can be obtained by calling getParcelableExtra method with given key.
+     *
+     * @param key   a String or null
+     * @param value a Parcelable or null
+     */
+    public void putExtra(String key, Parcelable value) {
+        if (extra == null) extra = new Bundle();
+        extra.putParcelable(key, value);
+    }
+
+    /**
+     * Removes mapped value from the extra for the given key.
+     *
+     * @param key a String or null
+     */
+    public void removeExtra(String key) {
+        if (extra == null) extra = new Bundle();
+        extra.remove(key);
     }
 
     //endregion
