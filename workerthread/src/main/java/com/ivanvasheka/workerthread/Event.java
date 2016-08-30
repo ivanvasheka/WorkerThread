@@ -466,7 +466,7 @@ public class Event<T> {
     }
 
     public static <T> Builder<T> to(@NonNull Class<?> subscriber) {
-        return new Builder<>();
+        return new Builder<>(subscriber);
     }
 
     public static class Builder<T> {
@@ -475,6 +475,10 @@ public class Event<T> {
 
         public Builder() {
             event = new Event<>();
+        }
+
+        public Builder(@NonNull Class<?> subscriber) {
+            event = new Event<>(subscriber);
         }
 
         public Builder<T> withType(@Type int type) {
