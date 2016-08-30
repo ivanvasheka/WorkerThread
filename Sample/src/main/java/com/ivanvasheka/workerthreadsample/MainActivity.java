@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static class Task implements Runnable {
         @Override
         public void run() {
+            WorkerThread.get().invalidate(MainActivity.class);
+
             Random random = new Random();
             for (int i = 0; i < 1000; i++) {
                 try {

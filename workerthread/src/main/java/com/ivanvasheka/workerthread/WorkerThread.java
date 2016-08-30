@@ -3,6 +3,7 @@ package com.ivanvasheka.workerthread;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -52,6 +53,28 @@ public final class WorkerThread {
      */
     public void execute(@NonNull Runnable task) {
         executor.execute(task);
+    }
+
+    /**
+     * Removes all previously posted events for the passed subscriber. Pass null as a parameter to
+     * remove events added for all subscribers.
+     *
+     * @param subscriber .
+     */
+    public synchronized void invalidate(@Nullable Class<?> subscriber) {
+        Iterator<Event> iterator = events.iterator();
+        while (iterator.hasNext()) {
+            Event event = iterator.next();
+            if (subscriber == null) {
+                if (event.getSubscriber() == null) {
+                    iterator.remove();
+                }
+            } else {
+                if (subscriber.equals(event.getSubscriber())) {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     /**
