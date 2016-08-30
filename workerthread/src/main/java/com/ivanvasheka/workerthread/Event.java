@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @SuppressWarnings("unused")
-public class Event<T> {
+public class Event {
 
     /**
      * Default event type. Allows to store multiple events for one subscriber.
@@ -49,7 +49,7 @@ public class Event<T> {
     @Nullable
     private Bundle extra;
     @Nullable
-    private T data;
+    private Object data;
 
     public Event() {
     }
@@ -441,11 +441,12 @@ public class Event<T> {
     //region Data methods
 
     @Nullable
-    public T getData() {
-        return data;
+    public <T> T getData() {
+        //noinspection unchecked
+        return data == null ? null : (T) data;
     }
 
-    public void setData(@Nullable T data) {
+    public void setData(@Nullable Object data) {
         this.data = data;
     }
 
@@ -461,57 +462,57 @@ public class Event<T> {
 
     //region Builder pattern realisation
 
-    public static <T> Builder<T> toEveryone() {
-        return new Builder<>();
+    public static Builder toEveryone() {
+        return new Builder();
     }
 
-    public static <T> Builder<T> to(@NonNull Class<?> subscriber) {
-        return new Builder<>(subscriber);
+    public static Builder to(@NonNull Class<?> subscriber) {
+        return new Builder(subscriber);
     }
 
-    public static class Builder<T> {
+    public static class Builder {
 
-        private Event<T> event;
+        private Event event;
 
         public Builder() {
-            event = new Event<>();
+            event = new Event();
         }
 
         public Builder(@NonNull Class<?> subscriber) {
-            event = new Event<>(subscriber);
+            event = new Event(subscriber);
         }
 
-        public Builder<T> withType(@Type int type) {
+        public Builder withType(@Type int type) {
             event.type = type;
             return this;
         }
 
-        public Builder<T> latestOnly() {
+        public Builder latestOnly() {
             event.type = TYPE_LATEST_ONLY;
             return this;
         }
 
-        public Builder<T> oneShot() {
+        public Builder oneShot() {
             event.type = TYPE_ONE_SHOT;
             return this;
         }
 
-        public Builder<T> withNumber(@Nullable Number number) {
+        public Builder withNumber(@Nullable Number number) {
             event.number = number;
             return this;
         }
 
-        public Builder<T> withMessage(@Nullable String message) {
+        public Builder withMessage(@Nullable String message) {
             event.message = message;
             return this;
         }
 
-        public Builder<T> withExtra(@Nullable Bundle extra) {
+        public Builder withExtra(@Nullable Bundle extra) {
             event.extra = extra;
             return this;
         }
 
-        public Builder<T> withData(@Nullable T data) {
+        public Builder withData(@Nullable Object data) {
             event.data = data;
             return this;
         }
@@ -522,12 +523,12 @@ public class Event<T> {
          *
          * @return event builder.
          */
-        public Builder<T> useSourceThread() {
+        public Builder useSourceThread() {
             event.useMainThread = false;
             return this;
         }
 
-        public Event<T> build() {
+        public Event build() {
             return event;
         }
 
