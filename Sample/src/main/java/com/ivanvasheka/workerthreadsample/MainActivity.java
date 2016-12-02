@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (!WorkerThread.get().isRunning(Task2.TAG)) {
+            WorkerThread.get().execute(new Task2(), Task2.TAG);
+        } else {
+            Log.d(Task2.TAG, "Task2 is still running no need to start new one.");
+        }
+
         WorkerThread.get().subscribe(this);
     }
 
@@ -97,6 +104,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             WorkerThread.get().post(new CustomEvent());
+        }
+    }
+
+    private static class Task2 implements Runnable {
+
+        public static String TAG = "TASK-2";
+
+        @Override
+        public void run() {
+            Log.d(Task2.TAG, "Task2: starting...");
+            Random random = new Random();
+            for (int i = 0; i < 500; i++) {
+                int randomInt = random.nextInt(50);
+
+                try {
+                    Thread.sleep(randomInt);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d(Task2.TAG, "Task2: finishing...");
+
+            Event.to(MainActivity.class)
+                    .withNumber(2)
+                    .post();
         }
     }
 }

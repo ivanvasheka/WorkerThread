@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -19,13 +20,17 @@ public final class WorkerThread {
     private Handler mainThread;
 
     private List<Event> events;
+    private HashSet<String> tasks;
     private List<EventListener> subscribers;
+
+    //region Singleton implementation
 
     private WorkerThread() {
         executor = Executors.newCachedThreadPool();
         mainThread = new Handler(Looper.getMainLooper());
 
         events = new ArrayList<>();
+        tasks = new HashSet<>();
         subscribers = new ArrayList<>();
     }
 
@@ -46,13 +51,37 @@ public final class WorkerThread {
         return instance;
     }
 
+    //endregion
+
+    //region Public methods
+
     /**
      * Executes a single task. Execution will go in a background (non ui) thread.
      *
-     * @param task to be execute.
+     * @param task to be executed.
      */
     public void execute(@NonNull Runnable task) {
         executor.execute(task);
+    }
+
+    /**
+     * Executes a single task. Execution will go in a background (non ui) thread.
+     * Use <b>tag</b> parameter as a unique identifier to each separate task. Must not be null.
+     * Can be used with method {@link WorkerThread#isRunning(String)} as a parameter
+     * to check if task is still running.
+     *
+     * @param task to be executed.
+     * @param tag  that represents this task.
+     */
+    public void execute(@NonNull final Runnable task, @NonNull String tag) {
+        Task taskWrapper = new Task(tag) {
+            @Override
+            public void execute() {
+                task.run();
+            }
+        };
+
+        executor.execute(taskWrapper);
     }
 
     /**
@@ -137,6 +166,75 @@ public final class WorkerThread {
         }
     }
 
+    /**
+     * Checks whether task that was send to execution with <b>tag</b> is still running.
+     *
+     * @param tag that represents single task.
+     * @return <b>true</b> task is running, <b>false</b> otherwise.
+     */
+    public boolean isRunning(@NonNull String tag) {
+        return tasks.contains(tag);
+    }
+
+    /**
+     * Check if there is undelivered event for the <b>subscriber</b>.
+     * Note, that if there is undelivered event - it will be delivered through
+     * {@link EventListener#onEvent(Event)} method.
+     * This method should be called before {@link WorkerThread#subscribe(EventListener)}, cause
+     * any undelivered events will be delivered when the appropriate subscriber is subscribed.
+     *
+     * @param subscriber .
+     * @return <b>true</b> if there is undelivered event for this subscriber, <b>false</b> otherwise.
+     */
+    public boolean hasEvent(@NonNull EventListener subscriber) {
+        for (Event event : events) {
+            if (subscriber.getClass().equals(event.getSubscriber())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if there is undelivered event for the <b>subscriber</b> and with <b>number</b>.
+     * Note, that if there is undelivered event - it will be delivered through
+     * {@link EventListener#onEvent(Event)} method.
+     * This method should be called before {@link WorkerThread#subscribe(EventListener)}, cause
+     * any undelivered events will be delivered when the appropriate subscriber is subscribed.
+     *
+     * @param subscriber .
+     * @param number     to compare with events number.
+     * @return <b>true</b> if there is undelivered event with passed number for this subscriber,
+     * <b>false</b> otherwise.
+     */
+    public boolean hasEventWithNumber(@NonNull EventListener subscriber, @NonNull Number number) {
+        for (Event event : events) {
+            if (subscriber.getClass().equals(event.getSubscriber())) {
+                if (event.hasNumber()) {
+                    //noinspection ConstantConditions
+                    return event.getNumber().equals(number);
+                }
+            }
+        }
+        return false;
+    }
+
+    //endregion
+
+    //region Package private methods
+
+    void registerRunningTask(@NonNull String tag) {
+        tasks.add(tag);
+    }
+
+    void unregisterRunningTask(@NonNull String tag) {
+        tasks.remove(tag);
+    }
+
+    //endregion
+
+    //region Private methods
+
     private void deliverEvents() {
         if (!events.isEmpty() && !subscribers.isEmpty()) {
             Iterator<Event> iterator = events.iterator();
@@ -191,4 +289,6 @@ public final class WorkerThread {
             }
         }
     }
+
+    //endregion
 }
