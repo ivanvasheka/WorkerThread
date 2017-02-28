@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.2.3'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
@@ -21,7 +21,7 @@ ext {
 
     versionMajor = 1 // 1 - 20000
     versionMinor = 0 // 0 - 99
-    versionPatch = 0 // 0 - 999
+    versionPatch = 1 // 0 - 999
 
     versionCode = versionMajor * 100000 + versionMinor * 1000 + versionPatch
     versionName = "${versionMajor}.${versionMinor}.${versionPatch}"
