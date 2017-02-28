@@ -25,8 +25,13 @@ public abstract class Task implements Runnable {
             execute();
         } finally {
             WorkerThread.get().unregisterRunningTask(tag);
+            onExecuted();
         }
     }
 
     public abstract void execute();
+
+    public void onExecuted() {
+
+    }
 }
